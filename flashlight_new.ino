@@ -1,6 +1,9 @@
 const int button_pin = 2;
 const int led_pin = 13;
 
+// || (alt gr + w , || or)
+// && (alt gr + c , && or)
+
 int charge = 5000; // in milli seconds (1000 milliseconds = 1 seconds)
 int max_charge = charge;
 bool button_state = true;
@@ -42,24 +45,25 @@ void loop(){
     }
   }
 
-  if(lamp_on == true and disabled == false){
+  if(lamp_on == true && disabled == false){
     //Serial.println("xd");
     digitalWrite(led_pin ,true);
    }else if(lamp_on == false){
     digitalWrite(led_pin ,false);
   }
 
-  if(charge <= flicker_time and in_use == true){
+  if(charge <= flicker_time && in_use == true){
     if(random_number < flicker_frequency){
       lamp_on = !lamp_on;
     }
   }
 
   if(in_use == true){
-    if(millis_changed == true){
+    if(millis_changed == true && disabled == false){
       charge --;
     }
-  }else{
+  }
+  if (in_use == false || disabled == true){
     if(millis_changed == true){
       charge ++;
     }
@@ -70,8 +74,11 @@ void loop(){
     lamp_on = false;
   }
 
-  if(disabled == true and charge >= max_charge){
+  if(disabled == true && charge >= max_charge){
     disabled = false;
+    if(digitalRead(button_pin) == false){
+      lamp_on = 1;
+    }
   }
 
   if(last_millis != millis()){
